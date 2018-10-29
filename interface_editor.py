@@ -41,7 +41,7 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
          
         self.checkBox.stateChanged.connect(self.checkbox_solarSystemExample) 
         self.checkbox_solarSystemExample()
-        self.comboBox_2.currentIndexChanged.connect(self.combobox_numberChoice)
+        self.comboBox.currentIndexChanged.connect(self.combobox_numberChoice)
 
     def initTextEdits(self):
         self.textEdit.setText('50')
@@ -77,6 +77,7 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
         self.comboBox_2.addItem("Cython Верле")
         self.comboBox_2.addItem("CUDA Верле")
         self.comboBox_2.setCurrentIndex(1)
+        self.comboBox_2.setEnabled(False)
         
     def slider_mass(self):
         self._m = self.horizontalSlider.value() * 5.0
@@ -113,6 +114,7 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
         
     
     def combobox_numberChoice(self):
+        self.timer.stop()
         global _particle_list        
         self.zoom = 1000
         
@@ -283,7 +285,7 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
     def checkbox_solarSystemExample(self):        
         if self.checkBox.isChecked():
             self.groupBox_4.setEnabled(False)
-            self.comboBox_2.setEnabled(False)
+            self.comboBox.setEnabled(False)
             global _particle_list
             _particle_list = []
             #Sun
@@ -308,7 +310,7 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
             self.timer.start(self._dt)
             self.zoom = 280
         else:
-            self.comboBox_2.setEnabled(True)
+            self.comboBox.setEnabled(True)
             self.combobox_numberChoice()
         
     def calculateSolar(self):
@@ -433,12 +435,13 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
         
     def draw(self):
         global _particle_list
+        sphere = glu.gluNewQuadric() 
 
         #Solar system drawing
         if self.checkBox.isChecked():
             #Sun
             gl.glPushMatrix()
-            sphere = glu.gluNewQuadric()  
+             
             gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, _particle_list[0].color)
             gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, _particle_list[0].color)
             gl.glTranslatef(_particle_list[0].x, _particle_list[0].y, _particle_list[0].z)
@@ -446,11 +449,9 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
             glu.gluSphere(sphere, _particle_list[0].m / 120000.0, 16, 16) 
             gl.glTranslatef(-_particle_list[0].x, -_particle_list[0].y, -_particle_list[0].z)
             gl.glPopMatrix()
-            glu.gluDeleteQuadric(sphere)
             
             #Mercury
             gl.glPushMatrix()
-            sphere = glu.gluNewQuadric()  
             gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, _particle_list[1].color)
             gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, _particle_list[1].color)
             gl.glTranslatef(_particle_list[1].x, _particle_list[1].y, _particle_list[1].z)
@@ -458,11 +459,9 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
             glu.gluSphere(sphere, _particle_list[1].m * 10, 16, 16) 
             gl.glTranslatef(-_particle_list[1].x, -_particle_list[1].y, -_particle_list[1].z)
             gl.glPopMatrix()
-            glu.gluDeleteQuadric(sphere)
             
             #Venus
-            gl.glPushMatrix()
-            sphere = glu.gluNewQuadric()  
+            gl.glPushMatrix() 
             gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, _particle_list[2].color)
             gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, _particle_list[2].color)
             gl.glTranslatef(_particle_list[2].x, _particle_list[2].y, _particle_list[2].z)
@@ -470,11 +469,9 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
             glu.gluSphere(sphere, _particle_list[2].m, 16, 16) 
             gl.glTranslatef(-_particle_list[2].x, -_particle_list[2].y, -_particle_list[2].z)
             gl.glPopMatrix()
-            glu.gluDeleteQuadric(sphere)
             
             #Earth
             gl.glPushMatrix()
-            sphere = glu.gluNewQuadric()  
             gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, _particle_list[3].color)
             gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, _particle_list[3].color)
             gl.glTranslatef(_particle_list[3].x, _particle_list[3].y, _particle_list[3].z)
@@ -482,11 +479,9 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
             glu.gluSphere(sphere, _particle_list[3].m, 16, 16) 
             gl.glTranslatef(-_particle_list[3].x, -_particle_list[3].y, -_particle_list[3].z)
             gl.glPopMatrix()
-            glu.gluDeleteQuadric(sphere)
             
             #Mars
-            gl.glPushMatrix()
-            sphere = glu.gluNewQuadric()  
+            gl.glPushMatrix() 
             gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, _particle_list[4].color)
             gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, _particle_list[4].color)
             gl.glTranslatef(_particle_list[4].x, _particle_list[4].y, _particle_list[4].z)
@@ -494,11 +489,9 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
             glu.gluSphere(sphere, _particle_list[4].m * 7, 16, 16) 
             gl.glTranslatef(-_particle_list[4].x, -_particle_list[4].y, -_particle_list[4].z)
             gl.glPopMatrix()
-            glu.gluDeleteQuadric(sphere)
                 
             #Jupiter
             gl.glPushMatrix()
-            sphere = glu.gluNewQuadric()  
             gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, _particle_list[5].color)
             gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, _particle_list[5].color)
             gl.glTranslatef(_particle_list[5].x, _particle_list[5].y, _particle_list[5].z)
@@ -506,11 +499,9 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
             glu.gluSphere(sphere, _particle_list[5].m / 30.0, 16, 16) 
             gl.glTranslatef(-_particle_list[5].x, -_particle_list[5].y, -_particle_list[5].z)
             gl.glPopMatrix()
-            glu.gluDeleteQuadric(sphere)
             
             #Saturn
             gl.glPushMatrix()
-            sphere = glu.gluNewQuadric()  
             gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, _particle_list[6].color)
             gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, _particle_list[6].color)
             gl.glTranslatef(_particle_list[6].x, _particle_list[6].y, _particle_list[6].z)
@@ -518,11 +509,9 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
             glu.gluSphere(sphere, _particle_list[6].m / 12.0, 16, 16) 
             gl.glTranslatef(-_particle_list[6].x, -_particle_list[6].y, -_particle_list[6].z)
             gl.glPopMatrix()
-            glu.gluDeleteQuadric(sphere)
             
             #Uran
-            gl.glPushMatrix()
-            sphere = glu.gluNewQuadric()  
+            gl.glPushMatrix() 
             gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, _particle_list[7].color)
             gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, _particle_list[7].color)
             gl.glTranslatef(_particle_list[7].x, _particle_list[7].y, _particle_list[7].z)
@@ -530,11 +519,9 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
             glu.gluSphere(sphere, _particle_list[7].m / 2.3, 16, 16) 
             gl.glTranslatef(-_particle_list[7].x, -_particle_list[7].y, -_particle_list[7].z)
             gl.glPopMatrix()
-            glu.gluDeleteQuadric(sphere)
             
             #Neptune
-            gl.glPushMatrix()
-            sphere = glu.gluNewQuadric()  
+            gl.glPushMatrix() 
             gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, _particle_list[8].color)
             gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, _particle_list[8].color)
             gl.glTranslatef(_particle_list[8].x, _particle_list[8].y, _particle_list[8].z)
@@ -542,7 +529,6 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
             glu.gluSphere(sphere, _particle_list[8].m / 3.2, 16, 16) 
             gl.glTranslatef(-_particle_list[8].x, -_particle_list[8].y, -_particle_list[8].z)
             gl.glPopMatrix()
-            glu.gluDeleteQuadric(sphere)
           
         #other
         else:
@@ -551,19 +537,20 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
                 if ((_particle_list[i].x > -2000)&(_particle_list[i].x < 2000)
                    &(_particle_list[i].y > -2000)&(_particle_list[i].y < 2000)
                    &(_particle_list[i].z > -2000)&(_particle_list[i].z < 2000)):
-                    gl.glPushMatrix()
-                    sphere = glu.gluNewQuadric()  
+                    gl.glPushMatrix()                      
                     gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, _particle_list[i].color)
                     gl.glMaterialfv(gl.GL_FRONT_AND_BACK, gl.GL_SPECULAR, _particle_list[i].color)
                     gl.glTranslatef(_particle_list[i].x, _particle_list[i].y, _particle_list[i].z)
                     glu.gluQuadricDrawStyle(sphere, glu.GLU_FILL)        
                     glu.gluSphere(sphere, _particle_list[i].m / 100.0, 16, 16) 
                     gl.glTranslatef(-_particle_list[i].x, -_particle_list[i].y, -_particle_list[i].z)
-                    gl.glPopMatrix()
-                    glu.gluDeleteQuadric(sphere)   
+                    gl.glPopMatrix()  
                 else:
                     _particle_list[i].alive = False
+            glu.gluDeleteQuadric(sphere) 
+        
                     
+        glu.gluDeleteQuadric(sphere) 
         label = str(len(_particle_list))
         self.label_12.setText(label)
         
@@ -575,7 +562,9 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
         #gl.glEnable(gl.GL_BLEND)
         gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
         gl.glEnable(gl.GL_DEPTH_TEST)
-        gl.glEnable(gl.GL_LIGHTING)        
+        gl.glEnable(gl.GL_LIGHTING)
+        gl.glEnable(gl.GL_LIGHT0)
+        gl.glEnable(gl.GL_COLOR_MATERIAL)        
         gl.glEnable(gl.GL_NORMALIZE) 
 
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_POSITION, [100,100,100,1])
@@ -584,8 +573,7 @@ class InterfaceEditor(QtWidgets.QMainWindow, interface.Ui_MainWindow, QtWidgets.
         gl.glLightfv(gl.GL_LIGHT0, gl.GL_SPOT_DIRECTION, [0,1,1]);
         gl.glLighti(gl.GL_LIGHT0, gl.GL_SPOT_EXPONENT, 1); 
         gl.glLighti(gl.GL_LIGHT0, gl.GL_SPOT_CUTOFF, 45);
-        gl.glEnable(gl.GL_LIGHT0)
-        gl.glEnable(gl.GL_COLOR_MATERIAL)
+
         
 
     def loadScene(self):
